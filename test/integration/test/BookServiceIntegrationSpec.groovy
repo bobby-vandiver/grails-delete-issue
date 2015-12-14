@@ -10,13 +10,18 @@ class BookServiceIntegrationSpec extends IntegrationSpec {
         given:
         final String title = 'The Gunslinger'
 
-        new Book(title: title).save()
+        Book book = new Book(title: title).save()
         assert Book.findByTitle(title) != null
+
+        Long bookId = book.id
 
         when:
         bookService.removeBook(title)
 
         then:
+        Book.get(bookId) == null
+
+        and:
         Book.findByTitle(title) == null
     }
 }
