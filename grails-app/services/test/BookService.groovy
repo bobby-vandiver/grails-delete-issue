@@ -16,4 +16,9 @@ class BookService {
             log.info("Book with title ${title} not found.")
         }
     }
+
+    void removeBookThenThrow(String title) {
+        removeBook(title)
+        throw new RuntimeException("Force transaction rollback")
+    }
 }

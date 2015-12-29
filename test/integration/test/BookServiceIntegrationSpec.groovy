@@ -6,15 +6,15 @@ class BookServiceIntegrationSpec extends IntegrationSpec {
 
     BookService bookService
 
-    void "remove book"() {
-        given:
-        final String title = 'The Gunslinger'
+    String title = 'The Gunslinger'
+    Long bookId
 
-        Book book = new Book(title: title).save()
+    void setup() {
+        bookId = new Book(title: title).save().id
         assert Book.findByTitle(title) != null
+    }
 
-        Long bookId = book.id
-
+    void "remove book"() {
         when:
         bookService.removeBook(title)
 
@@ -23,5 +23,19 @@ class BookServiceIntegrationSpec extends IntegrationSpec {
 
         and:
         Book.findByTitle(title) == null
+    }
+
+    void "remove book but runtime exception is thrown after delete"() {
+        when:
+        bookService.removeBookThenThrow(title)
+
+        then:
+        thrown(RuntimeException)
+
+        and:
+        Book.get(bookId) != null
+
+        and:
+        Book.findByTitle(title) != null
     }
 }
